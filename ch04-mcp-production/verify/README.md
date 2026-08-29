@@ -1,7 +1,9 @@
-# Integration Tests — opt-in
+# End-to-end checks — opt-in
 
-These tests run against the live `fixtures/docker-compose.yaml` stack (Keycloak + Redis + MinIO).
-They are NOT included in the default `pytest -q` run.
+These are **scripts, not pytest tests**. They run against the live
+`fixtures/docker-compose.yaml` stack (Keycloak + Redis + MinIO), hardcode the
+fixture's localhost ports, and need a token minted from the running realm — so
+they live outside `tests/` and `pytest` never collects them.
 
 ## How to run
 
@@ -20,9 +22,9 @@ curl -s -X POST 'http://localhost:8081/realms/self-healing/protocol/openid-conne
   -d 'username=alice' -d 'password=alice' -d 'scope=openid' \
   | python3 -c 'import json, sys; open("/tmp/alice_token","w").write(json.load(sys.stdin)["access_token"])'
 
-# 4. run integration tests
-.venv/bin/python tests/integration/test_e2e_happy_path.py
-.venv/bin/python tests/integration/test_e2e_negative_paths.py
+# 4. run the checks
+python verify/verify_e2e_happy_path.py
+python verify/verify_e2e_negative_paths.py
 
 # 5. tear down
 docker compose -f fixtures/docker-compose.yaml down -v
@@ -30,19 +32,19 @@ docker compose -f fixtures/docker-compose.yaml down -v
 
 ## What they validate
 
-**Happy path (`test_e2e_happy_path.py`)**:
+**Happy path (`verify_e2e_happy_path.py`)**:
 1. Real JWT from Keycloak verified against live JWKS through `auth.py`
 2. `policy.authorize()` allows alice's `runbooks.search` and `incidents.create`
 3. `enforce_rate_limit()` against live Redis: under limit
 4. `emit_audit_event()` writes a JSON event to the live MinIO Object Lock bucket
 5. Read-back from bucket — event has the correct `agent_identity`, `tool_name`, `policy_decision`
 
-**Negative paths (`test_e2e_negative_paths.py`)**:
+**Negative paths (`verify_e2e_negative_paths.py`)**:
 1. Bad token rejected by `verify_jwt_and_build_context`
 2. Bob's token validates (tenant=billing, role=runbook.reader)
 3. Bob denied on `incidents.create` by `policy.authorize` (wrong tenant)
 4. Bob allowed on `runbooks.search`
 5. Flooding past the 600/min `runbooks.search` limit fires `RateLimitExceeded` at call #601
 
-These tests gate-keep the lab claims in Chapter 4: every code snippet in the chapter
+These checks gate-keep the lab claims in Chapter 4: every code snippet in the chapter
 has a real, tested execution against real Keycloak/Redis/MinIO behind it.

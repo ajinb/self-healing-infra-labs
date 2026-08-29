@@ -37,6 +37,17 @@ uv run pytest -q                                        # negative tests
 uv run python -m mcp_server.server                      # serve on :8080
 ```
 
+## End-to-end checks against the live stack
+
+`verify/` holds two scripts that exercise the real Keycloak, Redis and MinIO
+rather than fakes. They are **scripts, not pytest tests** — they hardcode the
+fixture's localhost ports and need a token minted from the running Keycloak, so
+they sit outside `tests/` and are not collected by `pytest`.
+
+See [`verify/README.md`](verify/README.md) for the full recipe: bring the
+compose stack up, wait for the realm import, mint alice's token, run the two
+scripts, tear down.
+
 ## Spec revision
 
 The chapter targets MCP `2026-07-28`, which made the protocol stateless. This
