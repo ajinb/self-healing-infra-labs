@@ -1,0 +1,26 @@
+# Local fixture for integration runs against a real Kubernetes cluster.
+# kind-in-docker + a Prometheus stack that the verifier probes can scrape.
+# Unit tests run without this fixture — see tests/conftest.py.
+version: "3.9"
+
+services:
+  kind:
+    image: kindest/node:v1.30.0
+    privileged: true
+    networks: [lab]
+    healthcheck:
+      test: ["CMD", "kubectl", "get", "nodes"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks: [lab]
+
+networks:
+  lab: {}

@@ -1,0 +1,12 @@
+{
+  "version": "4",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {"alertname": "HighErrorRate", "severity": "critical", "service": "payments-api"},
+      "annotations": {"summary": "error ratio 0.23 over 5m on payments-api"},
+      "startsAt": "2026-03-30T03:14:00Z"
+    }
+  ]
+}

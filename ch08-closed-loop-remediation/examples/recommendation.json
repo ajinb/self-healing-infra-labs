@@ -1,0 +1,20 @@
+{
+  "trace_id": "investigation-2026-05-12-001",
+  "diagnosis_ts_unix": 1747008000,
+  "tenant": "tenant-a",
+  "actor": "sre-agent",
+  "recommendation": {
+    "action": "pod_restart",
+    "params": {
+      "namespace": "default",
+      "deployment": "api"
+    },
+    "reason": "API pod in CrashLoopBackOff for 3 cycles; OOMKilled with healthy memory limit suggests transient",
+    "blast_radius": {
+      "pods": 3,
+      "tenants_affected": 1
+    }
+  },
+  "staleness_budget_seconds": 60,
+  "deadline_seconds": 120
+}

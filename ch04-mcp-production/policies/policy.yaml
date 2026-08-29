@@ -1,0 +1,13 @@
+# Default policy bundle for the Ch 4 lab.
+#
+# Two-way door: start with this YAML; graduate to OPA when policy logic
+# requires attribute-based decisions involving the input itself.
+
+tools:
+  runbooks.search:
+    allowed_tenants: "*"
+    required_roles: ["runbook.reader"]
+
+  incidents.create:
+    allowed_tenants: ["flight-ops", "platform"]
+    required_roles: ["incident.writer"]

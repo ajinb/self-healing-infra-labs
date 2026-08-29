@@ -1,0 +1,14 @@
+{
+  "channel": "incident-2026-03-30-payments",
+  "messages": [
+    {"ts": "2026-03-30T03:14:00Z", "user": "U01", "role": "on-call SRE", "text": "paged: HighErrorRate firing on payments-api"},
+    {"ts": "2026-03-30T03:15:00Z", "user": "U02", "role": "responder", "text": ":+1:"},
+    {"ts": "2026-03-30T03:16:00Z", "user": "U01", "role": "on-call SRE", "text": "error rate at 23% and climbing"},
+    {"ts": "2026-03-30T03:19:00Z", "user": "U03", "role": "service owner", "text": "lol what timing"},
+    {"ts": "2026-03-30T03:21:00Z", "user": "U03", "role": "service owner", "text": "i think it's the a3f9c2 deploy, went out at 02:58"},
+    {"ts": "2026-03-30T03:24:00Z", "user": "U01", "role": "on-call SRE", "text": "rolled back payments-api to previous release"},
+    {"ts": "2026-03-30T03:29:00Z", "user": "U01", "role": "on-call SRE", "text": "error rate back to baseline, recovered"},
+    {"ts": "2026-03-30T03:31:00Z", "user": "U02", "role": "responder", "text": "decided to hold the release until we have a regression test"},
+    {"ts": "2026-03-30T03:33:00Z", "user": "U03", "role": "service owner", "text": "thanks <@U01>"}
+  ]
+}

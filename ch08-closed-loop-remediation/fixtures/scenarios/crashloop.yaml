@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crashloop-app
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels: { app: crashloop-app }
+  template:
+    metadata:
+      labels: { app: crashloop-app }
+    spec:
+      containers:
+        - name: app
+          image: busybox:1.36
+          # Crash on startup if the feature flag is set — toggle the env var
+          # to recover. The lab tests force the flag on so the restart cannot
+          # actually fix the bug, exercising the rollback path.
+          env:
+            - name: BAD_FLAG
+              value: "true"
+          command:
+            - sh
+            - -c
+            - 'if [ "$BAD_FLAG" = "true" ]; then echo crashing; exit 1; fi; sleep infinity'
+          readinessProbe:
+            exec:
+              command: ["true"]
+            periodSeconds: 5

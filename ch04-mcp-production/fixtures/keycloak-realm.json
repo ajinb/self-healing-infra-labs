@@ -1,0 +1,88 @@
+{
+  "realm": "self-healing",
+  "enabled": true,
+  "accessTokenLifespan": 900,
+  "clients": [
+    {
+      "clientId": "self-healing-mcp",
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "secret": "lab-secret-not-for-prod",
+      "standardFlowEnabled": true,
+      "redirectUris": ["*"],
+      "webOrigins": ["*"],
+      "protocolMappers": [
+        {
+          "name": "audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.custom.audience": "api://self-healing-mcp",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        },
+        {
+          "name": "tenant",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "tenant",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "tenant",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {"name": "runbook.reader"},
+      {"name": "incident.writer"},
+      {"name": "approver"}
+    ]
+  },
+  "users": [
+    {
+      "username": "alice",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Alice",
+      "lastName": "Example",
+      "email": "alice@example.com",
+      "credentials": [{"type": "password", "value": "alice", "temporary": false}],
+      "requiredActions": [],
+      "attributes": {"tenant": ["flight-ops"]},
+      "realmRoles": ["runbook.reader", "incident.writer"]
+    },
+    {
+      "username": "bob",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Bob",
+      "lastName": "Example",
+      "email": "bob@example.com",
+      "credentials": [{"type": "password", "value": "bob", "temporary": false}],
+      "requiredActions": [],
+      "attributes": {"tenant": ["billing"]},
+      "realmRoles": ["runbook.reader"]
+    }
+  ]
+}
