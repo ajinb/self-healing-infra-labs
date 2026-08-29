@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  unit:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -32,5 +32,38 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e '.[dev]' || pip install -e .
+      # tests/integration needs the docker-compose fixture and is exercised by
+      # the ch04-integration job below, not here. Labs without that directory
+      # are unaffected by the ignore.
       - name: Test
-        run: pytest -q
+        run: pytest -q --ignore=tests/integration
+
+  ch04-integration:
+    # The flagship lab's end-to-end tests against real Keycloak, Redis and
+    # MinIO. Run on demand rather than on every push: the stack takes a couple
+    # of minutes to become healthy.
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    name: ch04 integration (docker)
+    defaults:
+      run:
+        working-directory: ch04-mcp-production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e '.[dev]' || pip install -e .
+      - name: Start fixtures
+        run: docker compose -f fixtures/docker-compose.yaml up -d --wait
+      - name: Test
+        run: pytest -q tests/integration
+      - name: Fixture logs on failure
+        if: failure()
+        run: docker compose -f fixtures/docker-compose.yaml logs --tail=80
+      - name: Stop fixtures
+        if: always()
+        run: docker compose -f fixtures/docker-compose.yaml down -v
