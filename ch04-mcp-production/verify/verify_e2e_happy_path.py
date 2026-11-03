@@ -11,18 +11,23 @@ os.environ["OAUTH_AUDIENCE"] = "api://self-healing-mcp"
 os.environ["REDIS_URL"] = "redis://localhost:6379/0"
 os.environ["AUDIT_BUCKET"] = "self-healing-mcp-audit"
 os.environ["AUDIT_ENDPOINT_URL"] = "http://localhost:9000"
-os.environ["AWS_ACCESS_KEY_ID"] = "minio"
-os.environ["AWS_SECRET_ACCESS_KEY"] = "minio12345"
+# Local docker-compose MinIO credentials (see docker-compose.yml); never real AWS keys.
+MINIO_USER = os.environ.setdefault("MINIO_ROOT_USER", "minio")
+MINIO_PASSWORD = os.environ.setdefault("MINIO_ROOT_PASSWORD", "minio12345")
+os.environ["AWS_ACCESS_KEY_ID"] = MINIO_USER
+os.environ["AWS_SECRET_ACCESS_KEY"] = MINIO_PASSWORD
 os.environ["AWS_REGION"] = "us-east-1"
 
 from mcp_server.auth import verify_jwt_and_build_context
 from mcp_server.policy import authorize
 from mcp_server.ratelimit import enforce_rate_limit
 from mcp_server.audit import emit_audit_event
-from mcp_server.tools import runbooks, incidents
+from mcp_server.tools import runbooks
 
 async def main():
-    token = open("/tmp/alice_token").read().strip()
+    token_path = os.environ.get("ALICE_TOKEN_FILE", "/tmp/alice_token")  # noqa: S108 - lab default
+    with open(token_path) as f:
+        token = f.read().strip()
 
     print("[1] verify JWT against live Keycloak JWKS")
     ctx = await verify_jwt_and_build_context(token)
@@ -55,7 +60,7 @@ async def main():
     print("[6] read back from MinIO")
     import boto3
     s3 = boto3.client("s3", endpoint_url="http://localhost:9000",
-                      aws_access_key_id="minio", aws_secret_access_key="minio12345",
+                      aws_access_key_id=MINIO_USER, aws_secret_access_key=MINIO_PASSWORD,
                       region_name="us-east-1")
     resp = s3.list_objects_v2(Bucket="self-healing-mcp-audit", Prefix="events/")
     keys = [o["Key"] for o in resp.get("Contents", [])]

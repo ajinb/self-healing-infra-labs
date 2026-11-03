@@ -6,6 +6,8 @@ into a decorator is the obvious next step once the structure is settled.
 
 from __future__ import annotations
 
+import os
+
 import time
 from contextvars import ContextVar
 
@@ -140,4 +142,6 @@ async def incidents_create(
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("mcp_server.server:app", host="0.0.0.0", port=8080, reload=False)
+    # 0.0.0.0 so the container's port mapping works; set MCP_HOST=127.0.0.1 when running on a host.
+    uvicorn.run("mcp_server.server:app", host=os.environ.get("MCP_HOST", "0.0.0.0"),  # noqa: S104
+                port=int(os.environ.get("MCP_PORT", "8080")), reload=False)

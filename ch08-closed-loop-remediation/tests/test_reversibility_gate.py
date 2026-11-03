@@ -1,7 +1,6 @@
 """The gate's contract: tier baseline + per-call upgrades + ceiling refusal."""
 
 from remediator.reversibility import (
-    GateDecision,
     Reversibility,
     evaluate,
     reversibility,
