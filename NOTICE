@@ -1,0 +1,9 @@
+self-healing-infra-labs
+Copyright (c) 2026 Ajin Baby
+
+All code in this repository (the chapter labs under ch04-* through ch09-*) is licensed
+under the MIT License; see LICENSE.
+
+The book these labs accompany, "Self-Healing Infrastructure: Building Autonomous Cloud
+Systems with AI", is distributed separately (https://leanpub.com/) and is not part of this
+repository. Its prose, figures and cover art are not covered by the MIT License.
