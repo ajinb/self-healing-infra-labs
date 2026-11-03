@@ -12,7 +12,7 @@ from mcp_server.auth import verify_jwt_and_build_context, AuthError
 from mcp_server.policy import authorize, PolicyDeny
 from mcp_server.ratelimit import enforce_rate_limit, RateLimitExceeded, redis as rl_redis
 
-import httpx, json
+import httpx
 
 async def get_token(user, password):
     async with httpx.AsyncClient(timeout=5) as c:

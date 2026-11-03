@@ -4,13 +4,9 @@ These tests use a fake OPA so the policy decision is whatever the test
 configures. The Rego bundle is exercised separately by `opa test policies/`.
 """
 
-import time
 from dataclasses import dataclass, field
-from typing import Any
 
-import pytest
 
-from autonomy.kill_switch import KillSwitch
 from autonomy.models import PolicyDecision
 from autonomy.policy_runner import PolicyRunner
 

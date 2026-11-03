@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: "self-healing-infra-labs"
+message: "If you use this software, please cite it using the metadata below."
+type: software
+authors:
+  - family-names: Baby
+    given-names: Ajin
+    orcid: "https://orcid.org/0009-0007-6190-9516"
+repository-code: "https://github.com/ajinb/self-healing-infra-labs"
+url: "https://cloudandsre.com"
+abstract: "Companion labs for the book Self-Healing Infrastructure: Building Autonomous Cloud Systems with AI"
+license: MIT
+version: "unreleased"
+date-released: "2026-11-03"
+keywords:
+  - self-healing
+  - sre
+  - mcp
+  - ai-agents
+  - book
